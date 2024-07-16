@@ -40,6 +40,7 @@ public class EventListener implements Listener {
                             if(!cdCase){
                                 cdCase = true;
                                 plugin.openCase(player);
+                                e.setCancelled(true);
                                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> cdCase = false, 20L);
                             }
                         }
