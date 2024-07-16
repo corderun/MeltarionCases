@@ -43,7 +43,7 @@ public class CaseCommands implements CommandExecutor {
                         if (file.isFile()) {
                             String fileName = file.getName();
                             // Тут кароч проверяется название кейса через названия файлов
-                            if (fileName.equalsIgnoreCase(caseName)) {
+                            if (fileName.equalsIgnoreCase(caseName + ".yml")) {
                                 sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.create.already-used")).replace("&", "§"));
                                 return true;
                             }
