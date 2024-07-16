@@ -1,0 +1,4 @@
+name: MeltarionCase
+version: '1.0-SNAPSHOT'
+main: org.corderun.meltarionCase.MeltarionCase
+api-version: '1.21'
