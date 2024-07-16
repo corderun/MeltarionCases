@@ -1,0 +1,19 @@
+Location:
+  ==: org.bukkit.Location
+  world: spawn
+  x: 0
+  y: 100
+  z: 0
+  pitch: 0
+  yaw: 0
+Items:
+  '1':
+    Type: diamond
+    name: 'Алмаз'
+    chance: 0.5
+    command: 'give %player% diamond 1'
+  '2':
+    Type: emerald
+    name: 'Изумруд'
+    chance: 0.5
+    command: 'give %player% emerald 1'
