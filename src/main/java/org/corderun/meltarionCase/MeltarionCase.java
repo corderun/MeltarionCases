@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Objects;
 
 public final class MeltarionCase extends JavaPlugin {
 
@@ -15,7 +16,7 @@ public final class MeltarionCase extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         getServer().getPluginManager().registerEvents(new EventListener(this), this);
-        this.getCommand("case").setExecutor(new CaseCommands(this));
+        Objects.requireNonNull(this.getCommand("case")).setExecutor(new CaseCommands(this));
         createLangConfig();
     }
 
