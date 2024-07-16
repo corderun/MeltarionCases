@@ -43,14 +43,15 @@ public final class MeltarionCase extends JavaPlugin {
         File casesDirectory = new File(getDataFolder(), "cases");
         if (!casesDirectory.exists()) {
             casesDirectory.mkdirs();
-        }
-        InputStream inpStream = getResource("cases/example.yml");
-        if (inpStream != null) {
-            File exampleYmlFile = new File(casesDirectory, "example.yml");
-            try {
-                Files.copy(inpStream, exampleYmlFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                e.printStackTrace();
+            // Создает example.yml только если нет директории cases
+            InputStream inpStream = getResource("cases/example.yml");
+            if (inpStream != null) {
+                File exampleYmlFile = new File(casesDirectory, "example.yml");
+                try {
+                    Files.copy(inpStream, exampleYmlFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
