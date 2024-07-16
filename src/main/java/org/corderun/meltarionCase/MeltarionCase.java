@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +29,7 @@ public final class MeltarionCase extends JavaPlugin {
 
     public void openCase(Player player, File file) {
         player.sendMessage("Открытие кейса...");
+
         YamlConfiguration caseFile = YamlConfiguration.loadConfiguration(file);
         List<CaseItem> items = new ArrayList<>();
         double totalChance = 0;
@@ -50,8 +52,13 @@ public final class MeltarionCase extends JavaPlugin {
         for (CaseItem item : items) {
             currentChance += item.getChance();
             if (randomValue <= currentChance) {
-                player.sendMessage("Вы получили: " + item.getName());
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), item.getCommand().replace("%player%", player.getName()));
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        player.sendMessage("Вы получили: " + item.getName());
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), item.getCommand().replace("%player%", player.getName()));
+                    }
+                }.runTaskLater(this, caseFile.getInt("Delay")*20L);
                 break;
             }
         }
