@@ -1,3 +1,12 @@
+no-perm: "У вас нет прав, чтобы использовать эту команду!"
 case:
   usage: "Использование: /case help"
   help: "help"
+  create:
+    usage: "Использование: /case create <Название>"
+    successful: "Вы успешно создали кейс %name%"
+    already-used: "Кейс с таким названием уже существует"
+  remove:
+    usage: "Использование: /case remove <Название>"
+    successful: "Вы успешно удалили кейс %name%"
+    not-found: "Кейса с таким названием не существует"

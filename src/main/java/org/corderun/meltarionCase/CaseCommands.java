@@ -20,7 +20,15 @@ public class CaseCommands implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(args.length == 0){
             sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.usage")).replace("&", "§"));
+            return true;
         }
-        return false;
+        if(args[0].equalsIgnoreCase("create")){
+            if(!sender.hasPermission("meltarioncase.create")){
+                sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("no-perm")).replace("&", "§"));
+                return true;
+            }
+
+        }
+        return true;
     }
 }
