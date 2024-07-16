@@ -63,7 +63,7 @@ public class CaseCommands implements CommandExecutor {
             Player player = (Player) sender;
             Location caseLoc = player.getTargetBlock(null, 100).getLocation();
             createCase(args[1], caseLoc);
-            sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.create.successful")).replace("&", "§"));
+            sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.create.successful")).replace("&", "§").replace("%name%", args[1]));
         }
         return true;
     }
