@@ -46,9 +46,10 @@ public final class MeltarionCase extends JavaPlugin {
             String type = caseFile.getString(path + ".Type");
             String name = caseFile.getString(path + ".name");
             double chance = caseFile.getDouble(path + ".chance");
-            String command = caseFile.getString(path + ".command");
+            String broadcast = caseFile.getString(path + ".broadcast");
+            List<String> commands = caseFile.getStringList(path + ".commands");
 
-            items.add(new CaseItem(type, name, chance, command));
+            items.add(new CaseItem(type, name, chance, broadcast, commands));
             totalChance += chance;
         }
 
@@ -62,8 +63,14 @@ public final class MeltarionCase extends JavaPlugin {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        player.sendMessage("Вы получили: " + item.getName());
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), item.getCommand().replace("%player%", player.getName()));
+                        if(!item.getBroadcast().equalsIgnoreCase("")){
+                            for(Player players : Bukkit.getOnlinePlayers()){
+                                players.sendMessage(item.getBroadcast().replace("&", "§").replace("%player%", player.getName()));
+                            }
+                        }
+                        for (String command : item.getCommands()) {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
+                        }
                         caseOpened.remove(file.getName());
                     }
                 }.runTaskLater(this, caseFile.getInt("Delay")*20L);
@@ -76,13 +83,15 @@ public final class MeltarionCase extends JavaPlugin {
         private final String type;
         private final String name;
         private final double chance;
-        private final String command;
+        private final String broadcast;
+        private final List<String> commands;
 
-        public CaseItem(String type, String name, double chance, String command) {
+        public CaseItem(String type, String name, double chance, String broadcast, List<String> commands) {
             this.type = type;
             this.name = name;
             this.chance = chance;
-            this.command = command;
+            this.broadcast = broadcast;
+            this.commands = commands;
         }
 
         public String getType() {
@@ -97,8 +106,12 @@ public final class MeltarionCase extends JavaPlugin {
             return chance;
         }
 
-        public String getCommand() {
-            return command;
+        public String getBroadcast(){
+            return broadcast;
+        }
+
+        public List<String> getCommands() {
+            return commands;
         }
     }
 

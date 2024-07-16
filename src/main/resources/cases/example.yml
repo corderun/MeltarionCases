@@ -12,9 +12,14 @@ Items:
     Type: diamond
     name: 'Алмаз'
     chance: 0.5
-    command: 'give %player% diamond 1'
+    broadcast: 'Игрок %player% получил алмаз!'
+    commands:
+      - 'give %player% diamond 1'
+      - 'tellraw %player% {"text":"Вы получили алмаз!"}'
   '2':
     Type: emerald
     name: 'Изумруд'
     chance: 0.5
-    command: 'give %player% emerald 1'
+    broadcast: ''
+    commands:
+      - 'give %player% emerald 1'
