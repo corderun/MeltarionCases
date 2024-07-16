@@ -77,6 +77,21 @@ public class CaseCommands implements CommandExecutor {
                 return true;
             }
             String caseName = args[1];
+
+            try {
+                Files.delete(Path.of("plugins/MeltarionCase/cases/" + caseName + ".yml"));
+                sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.remove.successful")).replace("&", "§").replace("%name%", args[1]));
+            } catch (IOException e) {
+                sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.remove.not-found")).replace("&", "§"));
+            }
+            return true;
+        }
+        if(args[0].equalsIgnoreCase("list")){
+            if(!sender.hasPermission("meltarioncase.list")){
+                sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("no-perm")).replace("&", "§"));
+                return true;
+            }
+            sender.sendMessage(plugin.langConfig.getString("case.list.header").replace("&", "§"));
             File directory = new File("plugins/MeltarionCase/cases");
             if (directory.exists() && directory.isDirectory()) {
                 File[] files = directory.listFiles();
@@ -84,23 +99,12 @@ public class CaseCommands implements CommandExecutor {
                     for (File file : files) {
                         if (file.isFile()) {
                             String fileName = file.getName();
-                            // Тут кароч проверяется название кейса через названия файлов
-                            if (fileName.equalsIgnoreCase(caseName + ".yml")) {
-                                try {
-                                    Files.delete(Path.of("plugins/MeltarionCase/cases/" + caseName + ".yml"));
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.remove.successful")).replace("&", "§").replace("%name%", args[1]));
-                                return true;
-                            } else{
-                                sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.remove.not-found")).replace("&", "§"));
-                                return true;
-                            }
+                            sender.sendMessage(fileName.replace(".yml", ""));
                         }
                     }
                 }
             }
+            return true;
         }
         return true;
     }
