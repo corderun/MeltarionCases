@@ -7,6 +7,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.io.File;
@@ -37,10 +39,10 @@ public class EventListener implements Listener {
                         YamlConfiguration caseFile = YamlConfiguration.loadConfiguration(file);
                         Location caseLoc = caseFile.getLocation("Location");
                         if (caseLoc != null && caseLoc.equals(e.getClickedBlock().getLocation())) {
+                            e.setCancelled(true);
                             if(!cdCase){
                                 cdCase = true;
                                 plugin.openCase(player);
-                                e.setCancelled(true);
                                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> cdCase = false, 20L);
                             }
                         }
