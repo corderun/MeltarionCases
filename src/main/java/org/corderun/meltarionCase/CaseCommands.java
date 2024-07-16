@@ -12,6 +12,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,6 +65,42 @@ public class CaseCommands implements CommandExecutor {
             Location caseLoc = player.getTargetBlock(null, 100).getLocation();
             createCase(args[1], caseLoc);
             sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.create.successful")).replace("&", "§").replace("%name%", args[1]));
+            return true;
+        }
+        if(args[0].equalsIgnoreCase("remove")){
+            if(!sender.hasPermission("meltarioncase.remove")){
+                sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("no-perm")).replace("&", "§"));
+                return true;
+            }
+            if(args.length == 1){
+                sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.remove.usage")).replace("&", "§"));
+                return true;
+            }
+            String caseName = args[1];
+            File directory = new File("plugins/MeltarionCase/cases");
+            if (directory.exists() && directory.isDirectory()) {
+                File[] files = directory.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.isFile()) {
+                            String fileName = file.getName();
+                            // Тут кароч проверяется название кейса через названия файлов
+                            if (fileName.equalsIgnoreCase(caseName + ".yml")) {
+                                try {
+                                    Files.delete(Path.of("plugins/MeltarionCase/cases/" + caseName + ".yml"));
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.remove.successful")).replace("&", "§").replace("%name%", args[1]));
+                                return true;
+                            } else{
+                                sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.remove.not-found")).replace("&", "§"));
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
         }
         return true;
     }
