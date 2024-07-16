@@ -1,12 +1,19 @@
 package org.corderun.meltarionCase;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class CaseCommands implements CommandExecutor {
@@ -51,7 +58,53 @@ public class CaseCommands implements CommandExecutor {
                     }
                 }
             }
+            // Здесь получается уже, что такого файла нет, так что можно создавать кейс
+            Player player = (Player) sender;
+            Location caseLoc = player.getEyeLocation();
+            createCase(args[1], caseLoc);
+            sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.create.successful")).replace("&", "§"));
         }
         return true;
+    }
+
+    private void createCase(String name, Location loc){
+        File casesDirectory = new File(plugin.getDataFolder(), "cases");
+        InputStream inpStream = plugin.getResource("cases/example.yml");
+        if (inpStream != null) {
+            File newCaseFile = new File(casesDirectory, name + ".yml");
+            try {
+                Files.copy(inpStream, newCaseFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                updateLocationInYaml(newCaseFile, loc);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void updateLocationInYaml(File yamlFile, Location loc) throws IOException {
+        Yaml yaml = new Yaml();
+        Map<String, Object> data = new HashMap<>();
+
+        try (InputStream inputStream = new FileInputStream(yamlFile)) {
+            data = yaml.load(inputStream);
+        }
+
+        if (data == null) {
+            data = new HashMap<>();
+        }
+
+        Map<String, Object> locationSection = new HashMap<>();
+        locationSection.put("world", loc.getWorld().getName());
+        locationSection.put("x", loc.getX());
+        locationSection.put("y", loc.getY());
+        locationSection.put("z", loc.getZ());
+        locationSection.put("yaw", loc.getYaw());
+        locationSection.put("pitch", loc.getPitch());
+
+        data.put("Location", locationSection);
+
+        try (OutputStream outputStream = new FileOutputStream(yamlFile)) {
+            yaml.dump(data, new OutputStreamWriter(outputStream));
+        }
     }
 }
