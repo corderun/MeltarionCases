@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Objects;
+import java.util.*;
 
 public final class MeltarionCase extends JavaPlugin {
 
@@ -26,8 +26,65 @@ public final class MeltarionCase extends JavaPlugin {
         createCaseFolder();
     }
 
-    public void openCase(Player player){
+    public void openCase(Player player, File file) {
         player.sendMessage("Открытие кейса...");
+        YamlConfiguration caseFile = YamlConfiguration.loadConfiguration(file);
+        List<CaseItem> items = new ArrayList<>();
+        double totalChance = 0;
+
+        for (String key : caseFile.getConfigurationSection("Items").getKeys(false)) {
+            String path = "Items." + key;
+            String type = caseFile.getString(path + ".Type");
+            String name = caseFile.getString(path + ".name");
+            double chance = caseFile.getDouble(path + ".chance");
+            String command = caseFile.getString(path + ".command");
+
+            items.add(new CaseItem(type, name, chance, command));
+            totalChance += chance;
+        }
+
+        Random random = new Random();
+        double randomValue = random.nextDouble() * totalChance;
+        double currentChance = 0;
+
+        for (CaseItem item : items) {
+            currentChance += item.getChance();
+            if (randomValue <= currentChance) {
+                player.sendMessage("Вы получили: " + item.getName());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), item.getCommand().replace("%player%", player.getName()));
+                break;
+            }
+        }
+    }
+
+    private static class CaseItem {
+        private final String type;
+        private final String name;
+        private final double chance;
+        private final String command;
+
+        public CaseItem(String type, String name, double chance, String command) {
+            this.type = type;
+            this.name = name;
+            this.chance = chance;
+            this.command = command;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public double getChance() {
+            return chance;
+        }
+
+        public String getCommand() {
+            return command;
+        }
     }
 
     private void createLangConfig() {
