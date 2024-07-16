@@ -1,13 +1,18 @@
 package org.corderun.meltarionCase;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MeltarionCase extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        saveDefaultConfig();
+        getServer().getPluginManager().registerEvents(new EventListener(this), this);
+    }
 
+    public void openCase(Player player){
+        player.sendMessage("Открытие кейса...");
     }
 
     @Override
