@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
@@ -60,7 +61,7 @@ public class CaseCommands implements CommandExecutor {
             }
             // Здесь получается уже, что такого файла нет, так что можно создавать кейс
             Player player = (Player) sender;
-            Location caseLoc = player.getEyeLocation();
+            Location caseLoc = player.getTargetBlock(null, 100).getLocation();
             createCase(args[1], caseLoc);
             sender.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.create.successful")).replace("&", "§"));
         }
@@ -74,37 +75,20 @@ public class CaseCommands implements CommandExecutor {
             File newCaseFile = new File(casesDirectory, name + ".yml");
             try {
                 Files.copy(inpStream, newCaseFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                updateLocationInYaml(newCaseFile, loc);
+                updateLocationInCaseFile(newCaseFile, loc);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void updateLocationInYaml(File yamlFile, Location loc) throws IOException {
-        Yaml yaml = new Yaml();
-        Map<String, Object> data = new HashMap<>();
-
-        try (InputStream inputStream = new FileInputStream(yamlFile)) {
-            data = yaml.load(inputStream);
-        }
-
-        if (data == null) {
-            data = new HashMap<>();
-        }
-
-        Map<String, Object> locationSection = new HashMap<>();
-        locationSection.put("world", loc.getWorld().getName());
-        locationSection.put("x", loc.getX());
-        locationSection.put("y", loc.getY());
-        locationSection.put("z", loc.getZ());
-        locationSection.put("yaw", loc.getYaw());
-        locationSection.put("pitch", loc.getPitch());
-
-        data.put("Location", locationSection);
-
-        try (OutputStream outputStream = new FileOutputStream(yamlFile)) {
-            yaml.dump(data, new OutputStreamWriter(outputStream));
+    private void updateLocationInCaseFile(File caseFile, Location loc) {
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(caseFile);
+        config.set("Location", loc);
+        try {
+            config.save(caseFile);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
