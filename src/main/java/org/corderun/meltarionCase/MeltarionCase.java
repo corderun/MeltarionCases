@@ -17,6 +17,7 @@ public final class MeltarionCase extends JavaPlugin {
 
 
     public YamlConfiguration langConfig;
+    public List<String> caseOpened;
 
     @Override
     public void onEnable() {
@@ -25,10 +26,16 @@ public final class MeltarionCase extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("case")).setExecutor(new CaseCommands(this));
         createLangConfig();
         createCaseFolder();
+        caseOpened = new ArrayList<>();
     }
 
     public void openCase(Player player, File file) {
+        if(caseOpened.contains(file.getName())){
+            player.sendMessage(Objects.requireNonNull(langConfig.getString("case.already-used")).replace("&", "§"));
+            return;
+        }
         player.sendMessage("Открытие кейса...");
+        caseOpened.add(file.getName());
 
         YamlConfiguration caseFile = YamlConfiguration.loadConfiguration(file);
         List<CaseItem> items = new ArrayList<>();
@@ -57,6 +64,7 @@ public final class MeltarionCase extends JavaPlugin {
                     public void run() {
                         player.sendMessage("Вы получили: " + item.getName());
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), item.getCommand().replace("%player%", player.getName()));
+                        caseOpened.remove(file.getName());
                     }
                 }.runTaskLater(this, caseFile.getInt("Delay")*20L);
                 break;

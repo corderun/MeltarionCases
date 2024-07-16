@@ -2,6 +2,7 @@ no-perm: "У вас нет прав, чтобы использовать эту 
 case:
   usage: "Использование: /case help"
   help: "help"
+  already-used: "Кейс уже используется"
   create:
     usage: "Использование: /case create <Название>"
     successful: "Вы успешно создали кейс %name%"
