@@ -1,4 +1,5 @@
 no-perm: "У вас нет прав, чтобы использовать эту команду!"
+invalid-number: "Значение должно быть числовым"
 case:
   usage: "Использование: /case help"
   help: "help"
@@ -13,3 +14,9 @@ case:
     not-found: "Кейса с таким названием не существует"
   list:
     header: "Список кейсов:"
+  givekey:
+    usage: "Использование: /case givekey <Никнейм> <Кейс> <Количество>"
+    successful: "Вы успешно выдали игроку %player% %amount% ключей кейса %case%"
+  setkey:
+    usage: "Использование: /case setkey <Никнейм> <Кейс> <Количество>"
+    successful: "Вы успешно установили игроку %player% %amount% ключей кейса %case%"

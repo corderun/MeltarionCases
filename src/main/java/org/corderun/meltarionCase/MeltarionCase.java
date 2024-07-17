@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
 public final class MeltarionCase extends JavaPlugin {
@@ -32,6 +33,11 @@ public final class MeltarionCase extends JavaPlugin {
         createLangConfig();
         createCaseFolder();
         caseOpened = new ArrayList<>();
+        connection = CaseDB.getConnection();
+    }
+
+    public Connection getConnection() {
+        return connection;
     }
 
     public void openCase(Player player, File file) {

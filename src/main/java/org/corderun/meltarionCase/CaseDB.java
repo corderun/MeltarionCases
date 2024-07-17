@@ -1,5 +1,6 @@
 package org.corderun.meltarionCase;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,7 +24,6 @@ public class CaseDB {
 
         try {
             plugin.connection = DriverManager.getConnection(url, user, password);
-            plugin.getLogger().info("Успешное подключение к базе данных!");
         } catch (SQLException e) {
             plugin.getLogger().severe("Не удается подключиться в базе данной: " + e.getMessage());
         }
@@ -40,6 +40,19 @@ public class CaseDB {
         }
     }
 
+    public static Connection reconnectToDatabase() {
+        try {
+            if (plugin.connection != null && !plugin.connection.isClosed()) {
+                plugin.connection.close();
+            }
+            CaseDB.connectToDatabase();
+            return plugin.connection;
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Не удалось переподключиться к базе данных: " + e.getMessage());
+            return null;
+        }
+    }
+
     public static void createTable(){
         String sql = "CREATE TABLE IF NOT EXISTS mcase_keys ("
                 + "player VARCHAR(255) NOT NULL,"
@@ -52,6 +65,10 @@ public class CaseDB {
         } catch (SQLException e) {
             plugin.getLogger().severe("Не удалось создать таблицу: " + e.getMessage());
         }
+    }
+
+    public static Connection getConnection() {
+        return plugin.connection;
     }
 
 }
