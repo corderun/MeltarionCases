@@ -68,7 +68,14 @@ public class CaseDB {
     }
 
     public static Connection getConnection() {
-        return plugin.connection;
+        try{
+            if (plugin.connection != null && !plugin.connection.isClosed()) {
+                return plugin.connection;
+            }
+        } catch (SQLException e){
+            return null;
+        }
+        return reconnectToDatabase();
     }
 
 }

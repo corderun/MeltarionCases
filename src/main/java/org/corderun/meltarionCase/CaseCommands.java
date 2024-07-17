@@ -1,6 +1,5 @@
 package org.corderun.meltarionCase;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -154,13 +153,6 @@ public class CaseCommands implements CommandExecutor {
                     }
                 }
             } catch (SQLException e) {
-                plugin.getLogger().severe("Не удалось записать данные: " + e.getMessage());
-            }
-            try(Connection connection = plugin.getConnection()) {
-                if (connection.isClosed()) {
-                    plugin.connection = CaseDB.reconnectToDatabase();
-                }
-            }catch (SQLException e) {
                 plugin.getLogger().severe("Не удалось записать данные: " + e.getMessage());
             }
             return true;

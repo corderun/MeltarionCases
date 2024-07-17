@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -37,7 +39,7 @@ public final class MeltarionCase extends JavaPlugin {
     }
 
     public Connection getConnection() {
-        return connection;
+        return CaseDB.getConnection();
     }
 
     public void openCase(Player player, File file) {
@@ -45,8 +47,30 @@ public final class MeltarionCase extends JavaPlugin {
             player.sendMessage(Objects.requireNonNull(langConfig.getString("case.already-used")).replace("&", "§"));
             return;
         }
-        player.sendMessage("Открытие кейса...");
+        player.sendMessage(Objects.requireNonNull(langConfig.getString("case.use.successful")).replace("&", "§"));
         caseOpened.add(file.getName());
+
+        try (Connection connection = getConnection()) {
+            String selectSql = "SELECT keys_count FROM mcase_keys WHERE player = ? AND case_name = ?";
+            try (PreparedStatement selectPstmt = connection.prepareStatement(selectSql)) {
+                selectPstmt.setString(1, player.getName());
+                selectPstmt.setString(2, file.getName().replace(".yml", ""));
+                ResultSet resultSet = selectPstmt.executeQuery();
+                resultSet.next();
+                    int currentKeyCount = resultSet.getInt("keys_count");
+                    int newKeyCount = currentKeyCount - 1;
+                    String updateSql = "UPDATE mcase_keys SET keys_count = ? WHERE player = ? AND case_name = ?";
+                    try (PreparedStatement updatePstmt = connection.prepareStatement(updateSql)) {
+                        updatePstmt.setInt(1, newKeyCount);
+                        updatePstmt.setString(2, player.getName());
+                        updatePstmt.setString(3, file.getName().replace(".yml", ""));
+                        updatePstmt.executeUpdate();
+                        getLogger().info("УДАЛЯЕМ");
+                    }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         YamlConfiguration caseFile = YamlConfiguration.loadConfiguration(file);
         List<CaseItem> items = new ArrayList<>();

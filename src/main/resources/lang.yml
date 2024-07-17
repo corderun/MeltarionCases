@@ -20,3 +20,6 @@ case:
   setkey:
     usage: "Использование: /case setkey <Никнейм> <Кейс> <Количество>"
     successful: "Вы успешно установили игроку %player% %amount% ключей кейса %case%"
+  use:
+    successful: "Открытие кейса..."
+    no-keys: "У вас нет ключей"
