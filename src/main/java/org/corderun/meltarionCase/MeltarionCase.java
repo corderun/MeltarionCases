@@ -69,7 +69,7 @@ public final class MeltarionCase extends JavaPlugin {
                             }
                         }
                         for (String command : item.getCommands()) {
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()).replace("%uuid%", player.getUniqueId().toString()));
                         }
                         caseOpened.remove(file.getName());
                     }
