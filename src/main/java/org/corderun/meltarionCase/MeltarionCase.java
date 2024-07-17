@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.Connection;
 import java.util.*;
 
 public final class MeltarionCase extends JavaPlugin {
@@ -18,10 +19,14 @@ public final class MeltarionCase extends JavaPlugin {
 
     public YamlConfiguration langConfig;
     public List<String> caseOpened;
+    public Connection connection;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        CaseDB.initClass(this);
+        CaseDB.connectToDatabase();
+        CaseDB.createTable();
         getServer().getPluginManager().registerEvents(new EventListener(this), this);
         Objects.requireNonNull(this.getCommand("case")).setExecutor(new CaseCommands(this));
         createLangConfig();
@@ -143,6 +148,6 @@ public final class MeltarionCase extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        CaseDB.disconnectFromDatabase();
     }
 }
