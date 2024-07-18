@@ -27,6 +27,9 @@ public final class MeltarionCase extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new CasePlaceholders(this).register();
+        }
         CaseDB.initClass(this);
         CaseDB.connectToDatabase();
         CaseDB.createTable();
@@ -65,7 +68,6 @@ public final class MeltarionCase extends JavaPlugin {
                         updatePstmt.setString(2, player.getName());
                         updatePstmt.setString(3, file.getName().replace(".yml", ""));
                         updatePstmt.executeUpdate();
-                        getLogger().info("УДАЛЯЕМ");
                     }
             }
         } catch (SQLException e) {

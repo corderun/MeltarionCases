@@ -154,6 +154,7 @@ public class CaseCommands implements CommandExecutor {
                 }
             } catch (SQLException e) {
                 plugin.getLogger().severe("Не удалось записать данные: " + e.getMessage());
+                sender.sendMessage("Произошла ошибка, пожалуйста свяжитесь с администрацией сервера");
             }
             return true;
         }
@@ -204,6 +205,7 @@ public class CaseCommands implements CommandExecutor {
                 }
             } catch (SQLException e) {
                 plugin.getLogger().severe("Не удалось записать данные: " + e.getMessage());
+                sender.sendMessage("Произошла ошибка, пожалуйста свяжитесь с администрацией сервера");
             }
             try(Connection connection = plugin.getConnection()) {
                 if (connection.isClosed()) {

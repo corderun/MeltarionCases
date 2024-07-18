@@ -54,7 +54,6 @@ public class EventListener implements Listener {
                                                     plugin.openCase(player, file);
                                                     plugin.getServer().getScheduler().runTaskLater(plugin, () -> cdCase = false, 20L);
                                                 } else{
-                                                    plugin.getLogger().info("ОНО НЕ НАШЛО КОЛИЧЕСТВО!");
                                                     player.sendMessage(Objects.requireNonNull(plugin.langConfig.getString("case.use.no-keys")).replace("&", "§"));
                                                     return;
                                                 }
