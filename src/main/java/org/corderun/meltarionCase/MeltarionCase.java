@@ -1,6 +1,8 @@
 package org.corderun.meltarionCase;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,6 +37,7 @@ public final class MeltarionCase extends JavaPlugin {
         CaseDB.createTable();
         getServer().getPluginManager().registerEvents(new EventListener(this), this);
         Objects.requireNonNull(this.getCommand("case")).setExecutor(new CaseCommands(this));
+        Objects.requireNonNull(getCommand("case")).setTabCompleter(this);
         createLangConfig();
         createCaseFolder();
         caseOpened = new ArrayList<>();
@@ -176,6 +179,77 @@ public final class MeltarionCase extends JavaPlugin {
                 }
             }
         }
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> tabCompletions = new ArrayList<>();
+        if (args.length == 1) {
+            if(sender.hasPermission("meltarioncase.help")){
+                tabCompletions.add("help");
+            }
+            if(sender.hasPermission("meltarioncase.givekey")){
+                tabCompletions.add("givekey");
+            }
+            if(sender.hasPermission("meltarioncase.setkey")){
+                tabCompletions.add("setkey");
+            }
+            if(sender.hasPermission("meltarioncase.list")){
+                tabCompletions.add("list");
+            }
+        }
+        if(args.length == 2){
+            if(args[0].equalsIgnoreCase("givekey")){
+                for(Player players : Bukkit.getOnlinePlayers()){
+                    if(sender.hasPermission("meltarioncase.givekey")) {
+                        tabCompletions.add(players.getName());
+                    }
+                }
+            }
+            if(args[0].equalsIgnoreCase("setkey")){
+                for(Player players : Bukkit.getOnlinePlayers()){
+                    if(sender.hasPermission("meltarioncase.setkey")) {
+                        tabCompletions.add(players.getName());
+                    }
+                }
+            }
+        }
+        if(args.length == 3){
+            if(args[0].equalsIgnoreCase("setkey") && sender.hasPermission("meltarioncase.setkey")){
+                File directory = new File("plugins/MeltarionCase/cases");
+                if (directory.exists() && directory.isDirectory()) {
+                    File[] files = directory.listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            if (file.isFile()) {
+                                String caseName = file.getName().replace(".yml", "");
+                                tabCompletions.add(caseName);
+                            }
+                        }
+                    }
+                }
+            }
+            if(args[0].equalsIgnoreCase("givekey") && sender.hasPermission("meltarioncase.givekey")){
+                File directory = new File("plugins/MeltarionCase/cases");
+                if (directory.exists() && directory.isDirectory()) {
+                    File[] files = directory.listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            if (file.isFile()) {
+                                String caseName = file.getName().replace(".yml", "");
+                                tabCompletions.add(caseName);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(args.length == 4){
+            if(args[0].equalsIgnoreCase("givekey") && sender.hasPermission("meltarioncase.givekey")){
+                tabCompletions.add("<Количество>");
+            }
+        }
+        return tabCompletions;
     }
 
     @Override
